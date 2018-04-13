@@ -1,0 +1,9 @@
+from jumpssh import SSHSession
+gateway_session = SSHSession('115.254.74.219','ubuntu', password='r!Dlr#123').open()
+remote_session = gateway_session.get_remote_session('10.1.5.216','pi', password='Success$2017')
+print(remote_session.get_cmd_output('pwd'))
+remote_session.get('/nohup.out.bac3', '/home/ubuntu/environments/amol/nohup.out.bac3')
+print('Done')
+remote_session.close()
+gateway_session.close()
+
