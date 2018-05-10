@@ -4,4 +4,4 @@ os.system('sudo cp /home/ubuntu/environments/amol/amolsb.bac3 /home/ubuntu/envir
 os.system('sudo cp /home/ubuntu/environments/amol/amolsb.bac2 /home/ubuntu/environments/amol/amolsb.bac3')
 os.system('sudo cp /home/ubuntu/environments/amol/amolsb.bac /home/ubuntu/environments/amol/amolsb.bac2')
 os.system('sudo cp /home/ubuntu/environments/amol/amolsb /home/ubuntu/environments/amol/amolsb.bac')
-#sudo cat /dev/null > /home/ubuntu/environments/amol/amolsb
+os.system('sudo cat /dev/null > /home/ubuntu/environments/amol/amolsb')
