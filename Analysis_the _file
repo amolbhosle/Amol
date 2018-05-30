@@ -1,58 +1,56 @@
-import sys
 import json
-import pprint
-import os
 import time
-import datetime
 data = []
-i=0
-test =0
-count1=0
-count2=0
-count3=0
-count4=0
-count5=0
+i = 0
+test = 0
+count1 = 0
+count2 = 0
+count3 = 0
+count4 = 0
+count5 = 0
+count6 = 0
 print('Press 1: To Read Nohup.out\nPress 2: To Read Json file')
 value = int(input())
 
-if 1==value:
-	print('Done1')
-	logfile = open("/home/ubuntu/environments/amol/nohup.out", "r")
-	string = logfile.read()
-	count1 = string.count("QR_SCANNED_RAW")
-	count2 = string.count("TOKEN_GENERATION")
-	count3 = string.count("QR_SCANNED_RAW")
-	count4 = string.count("GATE ACKNOWLEDGMENT RECEIVED")
-	#count5 = string.count("SCANNER: SCANNER ATTACHED:")
+if 1 == value:
+    print('Done1')
+    logfile = open("/home/ubuntu/environments/amol/nohup.out.bac", "r")
+    string = logfile.read()
+    count1 = string.count("QR_SCANNED_RAW")
+    count2 = string.count("TOKEN_GENERATION")
+    count3 = string.count("QR_SCANNED_RAW")
+    count4 = string.count("GATE ACKNOWLEDGMENT RECEIVED")
+    count5 = string.count("SCANNER: SCANNER ATTACHED:")
+    count6 = string.count("DEVICE_STATE")
 
-elif 2==value:
-	#print('Done1')
-	with open('/home/ubuntu/environments/amol/records.json') as f:
-		for line in f:
-			data.append(json.loads(line))
-			#print('Done2')
-	while i < 10000:
-		if data[i]['event']['MessageType']  == "APP STARTED" :   
-			count1=count1+1;
-		if data[i]['event']['MessageType']  == "TOKEN_GENERATION" :   
-			count2=count2+1;
-		if data[i]['event']['MessageType']  == "QR_SCANNED_RAW" :   
-			count3=count3+1;
-		if data[i]['event']['MessageType']  == "GATE ACKNOWLEDGMENT RECEIVED" :   
-			count4=count4+1;
-		i=i+1;
-
+elif 2 == value:
+    # print('Done1')
+    with open('/home/ubuntu/environments/amol/records_lab.json') as f:
+        for line in f:
+            data.append(json.loads(line))
+    # print('Done2')
+    while i < len(data):
+        if data[i]['event']['MessageType'] == "APP STARTED":
+            count1 = count1 + 1
+        if data[i]['event']['MessageType'] == "TOKEN_GENERATION":
+            count2 = count2 + 1;
+        if data[i]['event']['MessageType'] == "QR_SCANNED_RAW":
+            count3 = count3 + 1;
+        if data[i]['event']['MessageType'] == "GATE ACKNOWLEDGMENT RECEIVED":
+            count4 = count4 + 1;
+        if data[i]['event']['MessageType'] == "SCANNER ATTACHED:":
+            count5 = count5 + 1;
+        if data[i]['event']['MessageType'] == "DEVICE_STATE":
+            count6 = count6 + 1;
+        i = i + 1;
 
 while True:
-	#print("As on data ", datetime.datetime.fromtimestamp(float(data[1]['event']['Timestamp']['$numberLong'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
-	print("************************************************************************")
-	print("Number of APP Restart {0}".format(count1))
-	print("Number of Token Generated {0}".format(count2))
-	print("Number QR Scanned {0}".format(count3))	
-	print("Number of Entry or Exit Done {0}".format(count4))
-	print("Number of Scanner Attach {0}".format(count5))
-	time.sleep(10)
-                    
-
-
-
+    # print("As on data ", datetime.datetime.fromtimestamp(float(data[1]['event']['Timestamp']['$numberLong'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+    print("************************************************************************")
+    print("Number of APP Restart {0}".format(count1))
+    print("Number of Token Generated {0}".format(count2))
+    print("Number QR Scanned {0}".format(count3))
+    print("Number of Entry or Exit Done {0}".format(count4))
+    print("Number of SCANNER ATTACHED: {0}".format(count5))
+    print("Number of DEVICE STATE {0}".format(count6))
+    time.sleep(10)
