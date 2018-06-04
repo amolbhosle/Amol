@@ -1,56 +1,57 @@
 import json
 import time
+import pdb
+
 data = []
 i = 0
-test = 0
-count1 = 0
-count2 = 0
-count3 = 0
-count4 = 0
-count5 = 0
-count6 = 0
-print('Press 1: To Read Nohup.out\nPress 2: To Read Json file')
-value = int(input())
-
-if 1 == value:
-    print('Done1')
-    logfile = open("/home/ubuntu/environments/amol/nohup.out.bac", "r")
-    string = logfile.read()
-    count1 = string.count("QR_SCANNED_RAW")
-    count2 = string.count("TOKEN_GENERATION")
-    count3 = string.count("QR_SCANNED_RAW")
-    count4 = string.count("GATE ACKNOWLEDGMENT RECEIVED")
-    count5 = string.count("SCANNER: SCANNER ATTACHED:")
-    count6 = string.count("DEVICE_STATE")
-
-elif 2 == value:
-    # print('Done1')
-    with open('/home/ubuntu/environments/amol/records_lab.json') as f:
-        for line in f:
-            data.append(json.loads(line))
-    # print('Done2')
+s = 0
+count = []
+while s < 20:
+    count.append(0)
+    s = s + 1;
+logfile = open("/home/ubuntu/environments/amol/nohup.out.bac", "r")
+string = logfile.read()
+count[1] = string.count("APP STARTED")
+count[2] = string.count("TOKEN_GENERATION")
+count[3] = string.count("QR_SCANNED_RAW")
+count[4] = string.count("GATE ACKNOWLEDGMENT RECEIVED")
+count[5] = string.count("SCANNER: SCANNER ATTACHED:")
+count[6] = string.count("DEVICE_STATE")
+with open('/home/ubuntu/environments/amol/records.json') as f:
+    for line in f:
+        data.append(json.loads(line))
     while i < len(data):
-        if data[i]['event']['MessageType'] == "APP STARTED":
-            count1 = count1 + 1
+        if data[i]['event']['Data'] == "APP STARTED":
+            count[7] = count[7] + 1
         if data[i]['event']['MessageType'] == "TOKEN_GENERATION":
-            count2 = count2 + 1;
+            count[8] = count[8] + 1;
         if data[i]['event']['MessageType'] == "QR_SCANNED_RAW":
-            count3 = count3 + 1;
-        if data[i]['event']['MessageType'] == "GATE ACKNOWLEDGMENT RECEIVED":
-            count4 = count4 + 1;
-        if data[i]['event']['MessageType'] == "SCANNER ATTACHED:":
-            count5 = count5 + 1;
+            count[9] = count[9] + 1;
+        if data[i]['event']['Data'].find('GATE ACKNOWLEDGMENT RECEIVED') != -1:
+            count[10] = count[10] + 1;
+        if data[i]['event']['Data'].find('SCANNER INITIALIZATION') != -1:
+            count[11] = count[11] + 1
         if data[i]['event']['MessageType'] == "DEVICE_STATE":
-            count6 = count6 + 1;
-        i = i + 1;
-
-while True:
+            count[12] = count[12] + 1;
+        i += 1
+test=0       
+while test<1:
     # print("As on data ", datetime.datetime.fromtimestamp(float(data[1]['event']['Timestamp']['$numberLong'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
     print("************************************************************************")
-    print("Number of APP Restart {0}".format(count1))
-    print("Number of Token Generated {0}".format(count2))
-    print("Number QR Scanned {0}".format(count3))
-    print("Number of Entry or Exit Done {0}".format(count4))
-    print("Number of SCANNER ATTACHED: {0}".format(count5))
-    print("Number of DEVICE STATE {0}".format(count6))
-    time.sleep(10)
+    print("OUTPUT OF NOHUP.OUT FILE")
+    print("Number of APP Restart {0}".format(count[1]))
+    print("Number of Token Generated {0}".format(count[2]))
+    print("Number QR Scanned {0}".format(count[3]))
+    print("Number of Entry or Exit Done {0}".format(count[4]))
+    print("Number of SCANNER ATTACHED: {0}".format(count[5]))
+    print("Number of DEVICE STATE {0}".format(count[6]))
+    print("************************************************************************")
+    print("OUTPUT OF JSON FILE")
+    print("Number of APP Restart {0}".format(count[7]))
+    print("Number of Token Generated {0}".format(count[8]))
+    print("Number QR Scanned {0}".format(count[9]))
+    print("Number of Entry or Exit Done {0}".format(count[10]))
+    print("Number of SCANNER ATTACHED: {0}".format(count[11]))
+    print("Number of DEVICE STATE {0}".format(count[12]))
+    print("************************************************************************")
+    test=5
