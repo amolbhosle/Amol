@@ -2,34 +2,47 @@ from __future__ import division
 import os
 from jumpssh import SSHSession
 import datetime
-print(datetime.datetime.today())
-start=datetime.datetime.today()
-server =open('server_pro.txt','r').readlines()
-gateway_session = SSHSession(server[0],'ubuntu', password='r!Dlr#123').open()
-print("Connected to Server")
-remote_session = gateway_session.get_remote_session(server[1],'pi', password='Success$2017')
-print("Connected to pi")
-remote_session.get('/nohup.out.bac', '/home/ubuntu/environments/amol/nohup.out.bac')
-print("Nohup.out file copy Completed")
-remote_session.close()
-ddate = datetime.date.today()
-dtime = datetime.time(2, 1, 00)
-dcomb = datetime.datetime.combine(ddate, dtime)
-now = datetime.datetime.combine(ddate, dtime)
-dtime2 = datetime.time(2, 1, 00)
-tdelta = datetime.timedelta(days=1)
-ddate2 = ddate - tdelta
-then = datetime.datetime.combine(ddate2, dtime2)
-a = str(int(then.timestamp()))
-b =str(int(now.timestamp()))
-print(then)
-print(now)
-print(gateway_session.get_cmd_output("mongoexport  --host 10.30.4.22 --db kaa --collection logs_71910389122635980495  --query \'{$and:[{\"event.Timestamp\":{\"$gte\":"+a+"000,\"$lt\":"+b+"000}},{\"event.EquipmentId.string\":\"11263\"}]}\' --out /home/ubuntu/environments/amol/records.json"))
-gateway_session.get('/home/ubuntu/environments/amol/records.json', '/home/ubuntu/environments/amol/records.json')
-print("Json file copy Completed")
-gateway_session.close()
-os.system("python3 test.py")
-print(datetime.datetime.today())
-stop=datetime.datetime.today()
-print(stop-start)
+
+server = open('server_pro.txt', 'r').readlines()
+gateway_session = SSHSession(server[0], 'ubuntu', password='r!Dlr#123').open()
+
+def copy_nohup():
+    remote_session = gateway_session.get_remote_session(server[1], 'pi', password='Success$2017')
+    print("Connected to pi")
+    remote_session.get('/nohup.out.bac', '/home/ubuntu/environments/amol/nohup.out.bac')
+    print("Nohup.out file copy Completed")
+    remote_session.close()
+
+
+
+def copy_json():
+    ddate = datetime.date.today()
+    dtime = datetime.time(2, 1, 00)
+    now = datetime.datetime.combine(ddate, dtime)
+    dtime2 = datetime.time(2, 1, 00)
+    tdelta = datetime.timedelta(days=1)
+    ddate2 = ddate - tdelta
+    then = datetime.datetime.combine(ddate2, dtime2)
+    a = str(int(then.timestamp()))
+    b = str(int(now.timestamp()))
+    print(then)
+    print(now)
+    print(gateway_session.get_cmd_output("mongoexport  --host 10.30.4.22 --db kaa --collection logs_71910389122635980495  --query \'{$and:[{\"event.Timestamp\":{\"$gte\":" + a + "000,\"$lt\":" + b + "000}},{\"event.EquipmentId.string\":\"11263\"}]}\' --out /home/ubuntu/environments/amol/records.json"))
+    gateway_session.get('/home/ubuntu/environments/amol/records.json', '/home/ubuntu/environments/amol/records.json')
+    print("Json file copy Completed")
+    gateway_session.close()
+
+def main():
+    print(datetime.datetime.today())
+    start=datetime.datetime.today()
+    print("Connected to Server")
+    copy_nohup()
+    copy_json()
+    os.system("python3 test.py")
+    print(datetime.datetime.today())
+    stop = datetime.datetime.today()
+    print(stop - start)
+
+if __name__ == '__main__':
+    main()
 
