@@ -1,57 +1,75 @@
+#!/usr/bin/python3
 import json
 import time
 import pdb
 
-data = []
-i = 0
 s = 0
 count = []
-while s < 20:
-    count.append(0)
-    s = s + 1;
-logfile = open("/home/ubuntu/environments/amol/nohup.out.bac", "r")
-string = logfile.read()
-count[1] = string.count("APP STARTED")
-count[2] = string.count("TOKEN_GENERATION")
-count[3] = string.count("QR_SCANNED_RAW")
-count[4] = string.count("GATE ACKNOWLEDGMENT RECEIVED")
-count[5] = string.count("SCANNER: SCANNER ATTACHED:")
-count[6] = string.count("DEVICE_STATE")
+data = []
+with open("/home/ubuntu/environments/amol/nohup.out.bac", "r") as logfile:
+    string1 = logfile.read()
 with open('/home/ubuntu/environments/amol/records.json') as f:
     for line in f:
-        data.append(json.loads(line))
+         data.append(json.loads(line))
+
+while s < 20:
+  count.append(0)
+  s = s + 1;
+
+def main():
+    nohup_count()
+    json_count()
+    result()
+
+def nohup_count():
+    count[1] = string1.count("APP STARTED")
+    count[2] = string1.count("TOKEN_GENERATION")
+    count[3] = string1.count("QR_SCANNED_RAW")
+    count[4] = string1.count("GATE ACKNOWLEDGMENT RECEIVED")
+    count[5] = string1.count("SCANNER: SCANNER ATTACHED:")
+    count[6] = string1.count("DEVICE_STATE")
+
+def json_count():
+    i=0
     while i < len(data):
-        if data[i]['event']['Data'] == "APP STARTED":
+         if data[i]['event']['Data'] == "APP STARTED":
             count[7] = count[7] + 1
-        if data[i]['event']['MessageType'] == "TOKEN_GENERATION":
+         if data[i]['event']['MessageType'] == "TOKEN_GENERATION":
             count[8] = count[8] + 1;
-        if data[i]['event']['MessageType'] == "QR_SCANNED_RAW":
+         if data[i]['event']['MessageType'] == "QR_SCANNED_RAW":
             count[9] = count[9] + 1;
-        if data[i]['event']['Data'].find('GATE ACKNOWLEDGMENT RECEIVED') != -1:
+         if data[i]['event']['Data'].find('GATE ACKNOWLEDGMENT RECEIVED') != -1:
             count[10] = count[10] + 1;
-        if data[i]['event']['Data'].find('SCANNER INITIALIZATION') != -1:
+         if data[i]['event']['Data'].find('SCANNER INITIALIZATION') != -1:
             count[11] = count[11] + 1
-        if data[i]['event']['MessageType'] == "DEVICE_STATE":
+         if data[i]['event']['MessageType'] == "DEVICE_STATE":
             count[12] = count[12] + 1;
-        i += 1
-test=0       
-while test<1:
-    # print("As on data ", datetime.datetime.fromtimestamp(float(data[1]['event']['Timestamp']['$numberLong'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
-    print("************************************************************************")
-    print("OUTPUT OF NOHUP.OUT FILE")
-    print("Number of APP Restart {0}".format(count[1]))
-    print("Number of Token Generated {0}".format(count[2]))
-    print("Number QR Scanned {0}".format(count[3]))
-    print("Number of Entry or Exit Done {0}".format(count[4]))
-    print("Number of SCANNER ATTACHED: {0}".format(count[5]))
-    print("Number of DEVICE STATE {0}".format(count[6]))
-    print("************************************************************************")
-    print("OUTPUT OF JSON FILE")
-    print("Number of APP Restart {0}".format(count[7]))
-    print("Number of Token Generated {0}".format(count[8]))
-    print("Number QR Scanned {0}".format(count[9]))
-    print("Number of Entry or Exit Done {0}".format(count[10]))
-    print("Number of SCANNER ATTACHED: {0}".format(count[11]))
-    print("Number of DEVICE STATE {0}".format(count[12]))
-    print("************************************************************************")
-    test=5
+         i += 1
+
+def result():
+    test = 0
+    while test<1:
+        # print("As on data ", datetime.datetime.fromtimestamp(float(data[1]['event']['Timestamp']['$numberLong'])/1000).strftime('%Y-%m-%d %H:%M:%S'))
+        print("************************************************************************")
+        print("OUTPUT OF NOHUP.OUT FILE")
+        print("Number of APP Restart {0}".format(count[1]))
+        print("Number of Token Generated {0}".format(count[2]))
+        print("Number QR Scanned {0}".format(count[3]))
+        print("Number of Entry or Exit Done {0}".format(count[4]))
+        print("Number of SCANNER ATTACHED: {0}".format(count[5]))
+        print("Number of DEVICE STATE {0}".format(count[6]))
+        print("************************************************************************")
+        print("OUTPUT OF JSON FILE")
+        print("Number of APP Restart {0}".format(count[7]))
+        print("Number of Token Generated {0}".format(count[8]))
+        print("Number QR Scanned {0}".format(count[9]))
+        print("Number of Entry or Exit Done {0}".format(count[10]))
+        print("Number of SCANNER ATTACHED: {0}".format(count[11]))
+        print("Number of DEVICE STATE {0}".format(count[12]))
+        print("************************************************************************")
+        test += 1  #print
+
+if __name__ == '__main__':
+    main()
+
+
