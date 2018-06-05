@@ -1,5 +1,0 @@
-import os
-f = os.system('mongoexport --host 10.10.5.21 --db kaa --collection logs_07098361380917359373 --limit 3 --out /home/ubuntu/environments/amol/records.json')
-f
-
-
