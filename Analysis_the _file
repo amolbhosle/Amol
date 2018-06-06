@@ -16,6 +16,8 @@ while s < 20:
   count.append(0)
   s = s + 1;
 
+
+
 def main():
     nohup_count()
     json_count()
@@ -71,5 +73,6 @@ def result():
 
 if __name__ == '__main__':
     main()
+
 
 
