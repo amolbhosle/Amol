@@ -1,0 +1,92 @@
+from __future__ import division
+from jumpssh import SSHSession
+import datetime
+import kibi
+from memory_profiler import profile
+import sys
+import os
+from memory_profiler import memory_usage
+
+server = open('server_pro.txt', 'r').readlines()
+gateway_session = SSHSession(server[0], 'ubuntu', password='r!Dlr#123').open()
+
+
+def equipment_id():
+    print("Enter the Equipment_ID")
+    global equipment_id
+    equipment_id = str(input())
+    eq = int(equipment_id[-2:])
+    st_id = equipment_id[:3]
+    if st_id == '112':
+        station_id = str(1)
+    elif st_id == '111':
+        station_id = str(2)
+    elif st_id == '110':
+        station_id = str(3)
+    elif st_id == '109':
+        station_id = str(4)
+    elif st_id == '108':
+        station_id = str(5)
+    elif st_id == '107':
+        station_id = str(7)
+    elif st_id == '106':
+        station_id = str(8)
+    elif st_id == '105':
+        station_id = str(9)
+    elif st_id == '104':
+        station_id = str(10)
+    elif st_id == '103':
+        station_id = str(11)
+    elif st_id == '102':
+        station_id = str(12)
+    elif st_id == '101':
+        station_id = str(13)
+    gate = str(eq + 150)
+    global pi_ip
+    pi_ip = '10.' + station_id + '.5.' + gate
+
+
+
+
+def copy_json():
+    ddate = datetime.date(2018, 7, 15)
+    #ddate = datetime.date.today()
+    dtime = datetime.time(2, 4, 00)
+    now = datetime.datetime.combine(ddate, dtime)
+    dtime2 = datetime.time(2, 4, 00)
+    tdelta = datetime.timedelta(days=1)
+    ddate2 = ddate - tdelta
+    then = datetime.datetime.combine(ddate2, dtime2)
+    a = str(int(then.timestamp()))
+    b = str(int(now.timestamp()))
+    print(then)
+    print(now)
+    start_export_time = datetime.datetime.today()
+
+    #print(gateway_session.get_cmd_output("mongoexport  --host 10.30.4.22 --db kaa --collection logs_71910389122635980495  --query \'{$and:[{\"event.Timestamp\":{\"$gte\":" + a + "000,\"$lt\":" + b + "000}},{\"event.EquipmentId.string\":\"" + equipment_id + "\"},{\"event.SessionId.long\":{\"$exists\":true}}]}\' --out /home/ubuntu/environments/amol/records.json"))
+    #print(gateway_session.get_cmd_output("mongoexport  --host 10.30.4.22 --db kaa --collection logs_71910389122635980495  --query \'{$and:[{\"event.Timestamp\":{\"$gte\":" + a + "000,\"$lt\":" + b + "000}},{\"event.SessionId.long\":{\"$exists\":true}},{\"event.Data\":\"APP STARTED\"}]}\' --out /home/ubuntu/environments/amol/records.json"))#APP STARTED
+    #print(gateway_session.get_cmd_output("mongoexport  --host 10.30.4.22 --db kaa --collection logs_71910389122635980495  --query \'{$and:[{\"event.Timestamp\":{\"$gte\":" + a + "000,\"$lt\":" + b + "000}},{\"event.SessionId.long\":{\"$exists\":true}},{\"event.MessageType\":\"SCANNER\"}]}\' --out /home/ubuntu/environments/amol/records.json"))#SCANNER
+    stop_export_time = datetime.datetime.today()
+    print("Export Time",stop_export_time - start_export_time)
+    start_copy_time = datetime.datetime.today()
+    gateway_session.get('/home/ubuntu/environments/amol/records.json', '/home/ubuntu/environments/amol/records.json')
+    print("Size is",os.path.getsize('/home/ubuntu/environments/amol/records.json')/1000000)
+    stop_copy_time = datetime.datetime.today()
+    print("Copy Time",stop_copy_time - start_copy_time)
+    print("Json file copy Completed")
+    gateway_session.close()
+
+@profile
+def main():
+    sts=datetime.datetime.today()
+    print("Connected to Server")
+    equipment_id()
+    copy_json()
+    kibi.main()
+    stp = datetime.datetime.today()
+    print("Total Time", stp - sts)
+
+
+if __name__ == '__main__':
+    main()
+
