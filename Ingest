@@ -1,0 +1,63 @@
+import json
+from elasticsearch import Elasticsearch
+from bson import json_util
+import datetime
+import time
+from elasticsearch.helpers import bulk
+import psutil
+import os
+
+data = []
+es = Elasticsearch()
+j=0
+
+
+def parse():
+    i = 0
+    while i < len(data):
+        del data[i]['_id']
+        id_time = str(data[i]['event']['Timestamp']['$numberLong'])
+        time_for_id = datetime.datetime.fromtimestamp(int(id_time) / 1000).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+        time_stamp = datetime.datetime.utcfromtimestamp(int(id_time) / 1000).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+        data[i]["@timestamp"] = time_stamp
+        data[i]["_id"] = time_for_id
+        #es.index(index='metro', doc_type="gates", id=time_for_id, body=data[i])
+        #print(i)
+        i += 1
+
+
+def ingect():
+    print("CPU USAGE",psutil.cpu_percent())
+    print("Before ingest virtual memory=",psutil.virtual_memory())
+    bulk(es, data, index='metro', doc_type="gates", chunk_size=15000, max_chunk_bytes=104857600)
+    print("After ingest virtual memory=",psutil.virtual_memory())
+    process = psutil.Process(os.getpid())
+    print(process.memory_info().rss)
+    print("CPU USAGE",psutil.cpu_percent())
+    print("CPU USAGE",psutil.disk_usage('/'))
+
+
+
+def main():
+    print("disk USAGE", psutil.disk_usage('/'))
+    print("CPU USAGE",psutil.cpu_percent())
+    print("Intial virtual memory=",psutil.virtual_memory())
+    start_parse_time = datetime.datetime.today()
+    with open('/home/ubuntu/environments/amol/records.json') as f:
+        for line in f:
+            data.append(json.loads(line))
+    # print(es.count(index='metro'))
+    #es.indices.delete(index="metro", ignore=[400, 404])  # delete the index
+    parse()
+    stop_parse_time = datetime.datetime.today()
+    print("Parse Time",stop_parse_time - start_parse_time)
+    #es.indices.create(index='metro',doc_type='gates')
+    start_ingest_time = datetime.datetime.today()
+
+    ingect()
+    stop_ingest_time = datetime.datetime.today()
+    print("ingest",stop_ingest_time - start_ingest_time)
+
+
+if __name__ == '__main__':
+    main()
